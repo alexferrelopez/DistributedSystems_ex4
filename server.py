@@ -78,7 +78,8 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     messanger_pb2_grpc.add_ChatServiceServicer_to_server(ChatService(), server)
     port = 50051
-    server.add_insecure_port('[::]:' + str(port))
+    ip = "127.0.0.1"
+    server.add_insecure_port(ip + ":" + str(port))
     logger.info("Server started on port %s", port)
     server.start()
     server.wait_for_termination()

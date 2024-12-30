@@ -32,8 +32,11 @@ def listen_for_messages(stub, nickname):
 
             last_id = max(last_id, response.last_id)
         except grpc.RpcError as ex:
-            logger.error(f"Error: {ex}")
-            break
+            if ex.code() in (grpc.StatusCode.UNAVAILABLE, grpc.StatusCode.RESOURCE_EXHAUSTED):
+                logger.error(f"Server unavailable: {ex}")
+                root.destroy()  # Close the Tkinter window
+            else:
+                logger.error(f"Error: {ex}")
         sleep(1)
 
 
@@ -51,18 +54,22 @@ def send(event):
             logger.error(f"Error: {ex}")
 
 
-
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        logger.info("Usage: ./clientChat <chatServerIP> <nickname>")
+        logger.info("Usage: ./client.py <chatServerIP> <nickname>")
         sys.exit(1)
 
     chat_server_ip = sys.argv[1]
     nickname = sys.argv[2]
 
     # Connect to the server
-    channel = grpc.insecure_channel(f"{chat_server_ip}:50051")
-    stub = messanger_pb2_grpc.ChatServiceStub(channel)
+    try:
+        channel = grpc.insecure_channel(f"{chat_server_ip}:50051")
+        stub = messanger_pb2_grpc.ChatServiceStub(channel)
+        grpc.channel_ready_future(channel).result(timeout=2)
+    except grpc.FutureTimeoutError:
+        logger.error("Failed to connect to the server.")
+        sys.exit(1)
 
     # GUI
     root = Tk()
@@ -83,9 +90,7 @@ if __name__ == '__main__':
 
     root.bind("<Return>", send)
 
-
     # Start a thread to listen for incoming messages
     threading.Thread(target=listen_for_messages, args=(stub, nickname,), daemon=True).start()
 
     root.mainloop()
-

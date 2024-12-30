@@ -42,12 +42,14 @@ def send(event):
     msg = e.get()
     if msg.strip():
         e.delete(0, END)
-        response = stub.sendMessage(messanger_pb2.MessageRequest(nickname=nickname, message=msg))
-        if response.status < 0:
-            logger.warning(f"Failed to send message: {response.status_message}")
+        try:
+            response = stub.sendMessage(messanger_pb2.MessageRequest(nickname=nickname, message=msg))
+            if response.status < 0:
+                logger.warning(f"Failed to send message: {response.status_message}")
 
+        except grpc.RpcError as ex:
+            logger.error(f"Error: {ex}")
 
-    return
 
 
 if __name__ == '__main__':
@@ -64,7 +66,7 @@ if __name__ == '__main__':
 
     # GUI
     root = Tk()
-    root.title("gRPC chat")
+    root.title("gRPC chat - " + nickname)
     txt = Text(root, bg=BG_COLOR, fg=TEXT_COLOR, font=FONT, width=50, state=DISABLED)
     txt.grid(row=0, column=0, sticky=N + E + S + W)
 

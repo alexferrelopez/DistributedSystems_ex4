@@ -19,14 +19,14 @@ class ChatService(messanger_pb2_grpc.ChatServiceServicer):
         self.file_lock = threading.Lock()
         self.last_id = -1
         if not os.path.exists(self.chat_file):
-            open(self.chat_file, 'w').close()  # Create the file if it doesn't exist
+            open(self.chat_file, 'w', encoding="utf-8").close()  # Create the file if it doesn't exist
         else:
             with open(self.chat_file, 'r+b') as file:
                 self.last_id = self._get_last_id(file)
 
     def sendMessage(self, request, context):
         try:
-            with open(self.chat_file, 'a') as file:
+            with open(self.chat_file, 'a', encoding="utf-8") as file:
                 with self.file_lock:
                     self.last_id += 1
                     file.write(f"{self.last_id}-{request.nickname}: {request.message}\n")
@@ -37,7 +37,7 @@ class ChatService(messanger_pb2_grpc.ChatServiceServicer):
 
     def getMessages(self, request, context):
         try:
-            with open(self.chat_file, 'r') as file:
+            with open(self.chat_file, 'r', encoding="utf-8") as file:
                 trimmed_messages = self._get_lines(file, request.last_id + 1)
 
             return messanger_pb2.MessageListResponse(messages=trimmed_messages,
@@ -49,6 +49,7 @@ class ChatService(messanger_pb2_grpc.ChatServiceServicer):
         l = []
 
         for i, x in enumerate(fp):
+            # looking for the line where we should start reading
             if i >= _from:
                 split = x.strip().split("-", 1)
 
@@ -65,7 +66,7 @@ class ChatService(messanger_pb2_grpc.ChatServiceServicer):
                 f.seek(-2, os.SEEK_CUR)
         except OSError:
             f.seek(0)
-        last_line: str = f.readline().decode().split("-")[0]
+        last_line: str = f.readline().decode(encoding="utf-8").split("-")[0]
         if last_line.strip(' \t\n\r') != "":
             num = int(last_line)
         else:

@@ -20,7 +20,11 @@ If necessary, upgrade your version of pip:
 python -m pip install --upgrade pip
 ```
 
-Install the required packages in the requirements.txt file.
+Install the required packages in the requirements.txt file:
+
+```bash
+pip install -r requirements.txt
+```
 
 To re-generate the Python code from the protocol buffer file, run the following command:
 

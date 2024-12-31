@@ -10,7 +10,6 @@ and a client that provides a graphical user interface (GUI) for users to send an
 - The client can send and receive messages to/from the server through a graphical user interface (GUI) made in Tkinter.
 - The clients automatically disconnect from the server once it is shut down.
 - The server checks for tampering in the chat_log.txt file and skips any messages that don't match with the hash.
-- 
 
 ## REQUIREMENTS
 

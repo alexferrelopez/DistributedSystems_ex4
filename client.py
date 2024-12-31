@@ -47,7 +47,7 @@ def send(event):
         e.delete(0, END)
         try:
             response = stub.sendMessage(messanger_pb2.MessageRequest(nickname=nickname, message=msg))
-            if response.status < 0:
+            if int(response.status) < 0:
                 logger.warning(f"Failed to send message: {response.status_message}")
 
         except grpc.RpcError as ex:

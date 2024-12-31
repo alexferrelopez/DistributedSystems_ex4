@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 import threading
@@ -17,23 +18,20 @@ class ChatService(messanger_pb2_grpc.ChatServiceServicer):
     def __init__(self):
         self.chat_file = "logs/chat_log.txt"
         self.file_lock = threading.Lock()
-        self.last_id = -1
         if not os.path.exists(self.chat_file):
             open(self.chat_file, 'w', encoding="utf-8").close()  # Create the file if it doesn't exist
-        else:
-            with open(self.chat_file, 'r+b') as file:
-                self.last_id = self._get_last_id(file)
 
     def sendMessage(self, request, context):
         try:
             with open(self.chat_file, 'a', encoding="utf-8") as file:
                 with self.file_lock:
-                    self.last_id += 1
-                    file.write(f"{self.last_id}-{request.nickname}: {request.message}\n")
+                    full_msg = f"{request.nickname}: {request.message}"
+                    hashed = str(int(hashlib.md5(full_msg.encode("utf-8")).hexdigest(), 16))
+                    file.write(f"{hashed}-{full_msg}\n")
 
-            return messanger_pb2.StatusResponse(status=self.last_id, status_message="Message sent successfully")
+            return messanger_pb2.StatusResponse(status=hashed, status_message="Message sent successfully")
         except Exception as e:
-            return messanger_pb2.StatusResponse(status=-1, status_message=str(e))
+            return messanger_pb2.StatusResponse(status="-1", status_message=str(e))
 
     def getMessages(self, request, context):
         try:
@@ -45,33 +43,30 @@ class ChatService(messanger_pb2_grpc.ChatServiceServicer):
         except Exception as e:
             return messanger_pb2.MessageListResponse(messages=[])
 
-    def _get_lines(self, fp, _from):
+    @staticmethod
+    def _get_lines(fp, _from):
         l = []
+        i = 0
+        for x in fp:
+            is_valid, split = ChatService._is_valid_line(x)
 
-        for i, x in enumerate(fp):
-            # looking for the line where we should start reading
-            if i >= _from:
-                split = x.strip().split("-", 1)
-
-                if len(split) == 2:
+            if is_valid:
+                # looking for the line where we should start reading
+                if i >= _from:
                     l.append(split[1])
+                i += 1
 
         return l
 
     @staticmethod
-    def _get_last_id(f):
-        try:  # catch OSError in case of a one line file
-            f.seek(-2, os.SEEK_END)
-            while f.read(1) != b'\n':
-                f.seek(-2, os.SEEK_CUR)
-        except OSError:
-            f.seek(0)
-        last_line: str = f.readline().decode(encoding="utf-8").split("-")[0]
-        if last_line.strip(' \t\n\r') != "":
-            num = int(last_line)
+    def _is_valid_line(line):
+        split = line.strip(' \t\n\r').split("-", 1)
+        if len(split) == 2:
+            hashed_msg = str(int(hashlib.md5(split[1].encode("utf-8")).hexdigest(), 16))
+            true_hash = split[0]
+            return hashed_msg == true_hash, split
         else:
-            num = -1
-        return num
+            return False, None
 
 
 def serve():

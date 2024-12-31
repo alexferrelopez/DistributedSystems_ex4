@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fmessanger.proto\"3\n\x0eMessageRequest\x12\x10\n\x08nickname\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"8\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x01(\x05\x12\x16\n\x0estatus_message\x18\x02 \x01(\t\"8\n\x13MessageListResponse\x12\x10\n\x08messages\x18\x01 \x03(\t\x12\x0f\n\x07last_id\x18\x02 \x01(\x05\"7\n\x12MessageListRequest\x12\x0f\n\x07last_id\x18\x01 \x01(\x05\x12\x10\n\x08nickname\x18\x02 \x01(\t2x\n\x0b\x43hatService\x12/\n\x0bsendMessage\x12\x0f.MessageRequest\x1a\x0f.StatusResponse\x12\x38\n\x0bgetMessages\x12\x13.MessageListRequest\x1a\x14.MessageListResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fmessanger.proto\"3\n\x0eMessageRequest\x12\x10\n\x08nickname\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"8\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x16\n\x0estatus_message\x18\x02 \x01(\t\"8\n\x13MessageListResponse\x12\x10\n\x08messages\x18\x01 \x03(\t\x12\x0f\n\x07last_id\x18\x02 \x01(\x05\"7\n\x12MessageListRequest\x12\x0f\n\x07last_id\x18\x01 \x01(\x05\x12\x10\n\x08nickname\x18\x02 \x01(\t2x\n\x0b\x43hatService\x12/\n\x0bsendMessage\x12\x0f.MessageRequest\x1a\x0f.StatusResponse\x12\x38\n\x0bgetMessages\x12\x13.MessageListRequest\x1a\x14.MessageListResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)

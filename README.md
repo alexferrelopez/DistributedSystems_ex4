@@ -5,11 +5,19 @@ and a client that provides a graphical user interface (GUI) for users to send an
 
 # FEATURES
 
-- The server can handle multiple clients at the same time.
-- The server can provide context to the client by sending only the messages that the client has not yet received.
-- The client can send and receive messages to/from the server through a graphical user interface (GUI) made in Tkinter.
-- The clients automatically disconnect from the server once it is shut down.
-- The server checks for tampering in the chat_log.txt file and skips any messages that don't match with the hash.
+
+### Server-Side:
+- Maintains a log file for persistent message storage.
+- Provides sendMessage and getMessages functions to handle message insertion and retrieval.
+- Implements MD5 checksums to ensure data integrity.
+- Supports multiple clients simultaneously, ensuring scalability.
+- Automatically detects tampering in the chat_log.txt file and skips corrupted entries.
+### Client-Side:
+- GUI implemented using Tkinter for a more user-friendly experience.
+- Polls the server to fetch new messages using getMessages.
+- Sends messages to the server through an input text box.
+- Automatically disconnects when the server shuts down.
+
 
 ## REQUIREMENTS
 

@@ -19,6 +19,20 @@ and a client that provides a graphical user interface (GUI) for users to send an
 - Automatically disconnects when the server shuts down.
 
 
+## USAGE
+
+To start a gRPC server:
+
+```bash
+python server.py
+```
+
+To start a client:
+
+```bash
+python client.py 127.0.0.1 <username>
+```
+
 ## REQUIREMENTS
 
 In a virtual environment, run the following commands.
